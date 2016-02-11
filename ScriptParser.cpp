@@ -3,8 +3,10 @@
  *  ScriptParser.cpp - Define block parser of ONScripter
  *
  *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,9 +28,15 @@
 #define VERSION_STR1 "ONScripter"
 #define VERSION_STR2 "Copyright (C) 2001-2014 Studio O.G.A. All Rights Reserved."
 
+#ifdef CHARSET_GBK
+#define DEFAULT_SAVE_MENU_NAME "保存"
+#define DEFAULT_LOAD_MENU_NAME "读取"
+#define DEFAULT_SAVE_ITEM_NAME "进度"
+#else /*CHARSET_SJIS*/
 #define DEFAULT_SAVE_MENU_NAME "亙僙乕僽亜"
 #define DEFAULT_LOAD_MENU_NAME "亙儘乕僪亜"
 #define DEFAULT_SAVE_ITEM_NAME "偟偍傝"
+#endif /*CHARSET*/
 
 #define DEFAULT_TEXT_SPEED_LOW    40
 #define DEFAULT_TEXT_SPEED_MIDDLE 20

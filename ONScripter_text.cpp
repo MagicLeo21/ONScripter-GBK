@@ -3,8 +3,10 @@
  *  ONScripter_text.cpp - Text parser of ONScripter
  *
  *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,9 +25,36 @@
 
 #include "ONScripter.h"
 
+#ifdef CHARSET_GBK
+
+extern unsigned short convGBK2UTF16( unsigned short in );
+
+#define IS_ROTATION_REQUIRED(x) \
+    ( ( !IS_TWO_BYTE(*(x))) || \
+        ( *(x) == (unsigned char)0xa1 && *((x)+1) >= 0xb4 && *((x)+1) <= 0xbf ) || \
+        ( *(x) == (unsigned char)0xa3 && *((x)+1) >= 0xfc && *((x)+1) <= 0xfe ) || \
+        ( *(x) == (unsigned char)0xa1 && *((x)+1) == (unsigned char)0xab ) || \
+        ( *(x) == (unsigned char)0xa1 && *((x)+1) == (unsigned char)0xce ) || \
+        ( *(x) == (unsigned char)0xa1 && *((x)+1) == (unsigned char)0xad ) || \
+        ( *(x) == (unsigned char)0xa1 && *((x)+1) == (unsigned char)0xc2 ) || \
+        ( *(x) == (unsigned char)0xa3 && *((x)+1) == (unsigned char)0xdf ) || \
+        ( *(x) == (unsigned char)0xa3 && *((x)+1) == (unsigned char)0xa8 ) || \
+        ( *(x) == (unsigned char)0xa8 && *((x)+1) == (unsigned char)0x44 ) || \
+        ( *(x) == (unsigned char)0xa8 && *((x)+1) == (unsigned char)0x45 ) || \
+        ( *(x) == (unsigned char)0xa9 && *((x)+1) == (unsigned char)0x5c ) || \
+        ( *(x) == (unsigned char)0xa9 && *((x)+1) == (unsigned char)0x60 ) )
+
+#define IS_TRANSLATION_REQUIRED(x) \
+    ( ( *(x) == (unsigned char)0xa1 && *((x)+1) == (unsigned char)0xa2 )   || \
+        ( *(x) == (unsigned char)0xa1 && *((x)+1) == (unsigned char)0xa3 ) || \
+        ( *(x) == (unsigned char)0xa3 && *((x)+1) == (unsigned char)0xac ) || \
+        ( *(x) == (unsigned char)0xa3 && *((x)+1) == (unsigned char)0xae ) )
+
+#else /*CHARSET_SJIS*/
+
 extern unsigned short convSJIS2UTF16( unsigned short in );
 
-#define IS_ROTATION_REQUIRED(x)	\
+#define IS_ROTATION_REQUIRED(x) \
     (!IS_TWO_BYTE(*(x)) ||                                              \
      (*(x) == (char)0x81 && *((x)+1) == (char)0x50) ||                  \
      (*(x) == (char)0x81 && *((x)+1) == (char)0x51) ||                  \
@@ -34,8 +63,10 @@ extern unsigned short convSJIS2UTF16( unsigned short in );
      (*(x) == (char)0x81 && *((x)+1) >= 0x69 && *((x)+1) <= 0x7a) ||    \
      (*(x) == (char)0x81 && *((x)+1) == (char)0x80) )
 
-#define IS_TRANSLATION_REQUIRED(x)	\
+#define IS_TRANSLATION_REQUIRED(x)  \
         ( *(x) == (char)0x81 && *((x)+1) >= 0x41 && *((x)+1) <= 0x44 )
+
+#endif /*CHARSET*/
 
 void ONScripter::shiftHalfPixelX(SDL_Surface *surface)
 {
@@ -75,7 +106,11 @@ void ONScripter::drawGlyph( SDL_Surface *dst_surface, FontInfo *info, SDL_Color 
     if (IS_TWO_BYTE(text[0])){
         unsigned index = ((unsigned char*)text)[0];
         index = index << 8 | ((unsigned char*)text)[1];
+#ifdef CHARSET_GBK
+        unicode = convGBK2UTF16( index );
+#else /*CHARSET_SJIS*/
         unicode = convSJIS2UTF16( index );
+#endif /*CHARSET*/
     }
     else{
         if ((text[0] & 0xe0) == 0xa0 || (text[0] & 0xe0) == 0xc0) unicode = ((unsigned char*)text)[0] - 0xa0 + 0xff60;
@@ -188,8 +223,13 @@ void ONScripter::drawChar( char* text, FontInfo *info, bool flush_flag, bool loo
         info->newLine();
         for (int i=0 ; i<indent_offset ; i++){
             if (lookback_flag){
+#ifdef CHARSET_GBK
+                current_page->add( 0xc2 );
+                current_page->add( 0xa1 );
+#else /*CHARSET_SJIS*/
                 current_page->add(0x81);
                 current_page->add(0x40);
+#endif /*CHARSET*/
             }
             info->advanceCharInHankaku(2);
         }
@@ -659,8 +699,13 @@ int ONScripter::textCommand()
     if (buf[string_buffer_offset] == '[')
         string_buffer_offset++;
     else if (zenkakko_flag && 
+#ifdef CHARSET_GBK
+             buf[string_buffer_offset ] == "°æ"[0] && 
+             buf[string_buffer_offset+1] == "°æ"[1])
+#else /*CHARSET_SJIS*/
              buf[string_buffer_offset  ] == "Åy"[0] && 
              buf[string_buffer_offset+1] == "Åy"[1])
+#endif /*CHARSET*/
         string_buffer_offset += 2;
     else
         tag_flag = false;
@@ -669,8 +714,13 @@ int ONScripter::textCommand()
     int end_offset = start_offset;
     while (tag_flag && buf[string_buffer_offset]){
         if (zenkakko_flag && 
+#ifdef CHARSET_GBK
+            buf[string_buffer_offset ] == "°ø"[0] && 
+            buf[string_buffer_offset+1] == "°ø"[1]){
+#else /*CHARSET_SJIS*/
             buf[string_buffer_offset  ] == "Åz"[0] && 
             buf[string_buffer_offset+1] == "Åz"[1]){
+#endif /*CHARSET*/
             end_offset = string_buffer_offset;
             string_buffer_offset += 2;
             break;
@@ -797,8 +847,13 @@ bool ONScripter::processText()
         if ( checkLineBreak( script_h.getStringBuffer() + string_buffer_offset, &sentence_font ) ){
             sentence_font.newLine();
             for (int i=0 ; i<indent_offset ; i++){
+#ifdef CHARSET_GBK
+                current_page->add( 0xc2 );
+                current_page->add( 0xa1 );
+#else /*CHARSET_SJIS*/
                 current_page->add(0x81);
                 current_page->add(0x40);
+#endif /*CHARSET*/
                 sentence_font.advanceCharInHankaku(2);
             }
         }

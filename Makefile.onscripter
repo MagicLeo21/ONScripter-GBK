@@ -3,6 +3,8 @@
 # Makefile.onscripter - General makefile rules for ONScripter
 #
 
+include Makefile.config
+
 GUI_OBJS = ONScripter$(OBJSUFFIX) \
 	ONScripter_animation$(OBJSUFFIX) \
 	ONScripter_command$(OBJSUFFIX) \
@@ -23,20 +25,27 @@ GUI_OBJS = ONScripter$(OBJSUFFIX) \
 
 DECODER_OBJS = DirectReader$(OBJSUFFIX) \
 	SarReader$(OBJSUFFIX) \
-	NsaReader$(OBJSUFFIX) \
-	sjis2utf16$(OBJSUFFIX)
+	NsaReader$(OBJSUFFIX)
 
 SARDEC_OBJS  = sardec$(OBJSUFFIX) \
 	DirectReader$(OBJSUFFIX) \
-	SarReader$(OBJSUFFIX) \
-	sjis2utf16$(OBJSUFFIX)
+	SarReader$(OBJSUFFIX)
 
 SARCONV_OBJS = sarconv$(OBJSUFFIX) \
 	conv_shared$(OBJSUFFIX) \
 	resize_image$(OBJSUFFIX) \
 	DirectReader$(OBJSUFFIX) \
-	SarReader$(OBJSUFFIX) \
-	sjis2utf16$(OBJSUFFIX)
+	SarReader$(OBJSUFFIX)
+
+ifeq ($(CONFIG_CHARSET), GBK)
+DECODER_OBJS += gbk2utf16$(OBJSUFFIX)
+SARDEC_OBJS  += gbk2utf16$(OBJSUFFIX)
+SARCONV_OBJS += gbk2utf16$(OBJSUFFIX)
+else
+DECODER_OBJS += sjis2utf16$(OBJSUFFIX)
+SARDEC_OBJS  += sjis2utf16$(OBJSUFFIX)
+SARCONV_OBJS += sjis2utf16$(OBJSUFFIX)
+endif
 
 NSADEC_OBJS  = nsadec$(OBJSUFFIX) \
 	$(DECODER_OBJS)

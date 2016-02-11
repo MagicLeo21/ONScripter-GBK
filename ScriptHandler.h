@@ -3,8 +3,10 @@
  *  ScriptHandler.h - Script manipulation class
  *
  *  Copyright (c) 2001-2014 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,8 +31,14 @@
 #include <string.h>
 #include "BaseReader.h"
 
+#ifdef CHARSET_GBK /*CHARSET_GBK*/
+#define IS_TWO_BYTE(x) \
+        ( ( (unsigned char)(x) > (unsigned char)0x80 ) && \
+          ( (unsigned char)(x) != (unsigned char)0xff ) )
+#else /*CHARSET_SJIS*/
 #define IS_TWO_BYTE(x) \
         ( ((x) & 0xe0) == 0xe0 || ((x) & 0xe0) == 0x80 )
+#endif /*CHARSET*/
 
 typedef unsigned char uchar3[3];
 

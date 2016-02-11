@@ -3,8 +3,10 @@
  *  ScriptHandler.cpp - Script manipulation class
  *
  *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -788,14 +790,24 @@ int ScriptHandler::getStringFromInteger( char *buffer, int no, int num_column, b
     int c = 0;
     if (is_zero_inserted){
         for (i=0 ; i<num_space ; i++){
+#ifdef CHARSET_GBK
+            buffer[c++] = ((char*)"£°")[0];
+            buffer[c++] = ((char*)"£°")[1];
+#else
             buffer[c++] = ((char*)"‚O")[0];
             buffer[c++] = ((char*)"‚O")[1];
+#endif
         }
     }
     else{
         for (i=0 ; i<num_space ; i++){
+#ifdef CHARSET_GBK
+            buffer[c++] = ((char*)"¡¡")[0];
+            buffer[c++] = ((char*)"¡¡")[1];
+#else
             buffer[c++] = ((char*)"@")[0];
             buffer[c++] = ((char*)"@")[1];
+#endif
         }
     }
     if (num_minus == 1){
@@ -803,7 +815,11 @@ int ScriptHandler::getStringFromInteger( char *buffer, int no, int num_column, b
         buffer[c++] = "|"[1];
     }
     c = (num_column-1)*2;
+#ifdef CHARSET_GBK
+    char num_str[] = "£°£±£²£³£´£µ£¶£·£¸£¹";
+#else
     char num_str[] = "‚O‚P‚Q‚R‚S‚T‚U‚V‚W‚X";
+#endif
     for (i=0 ; i<num_digit ; i++){
         buffer[c]   = num_str[ no % 10 * 2];
         buffer[c+1] = num_str[ no % 10 * 2 + 1];

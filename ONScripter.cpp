@@ -3,8 +3,10 @@
  *  ONScripter.cpp - Execution block parser of ONScripter
  *
  *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,7 +28,12 @@
 #include <fontconfig/fontconfig.h>
 #endif
 
+#ifdef CHARSET_GBK
+extern void initGBK2UTF16();
+#else /*CHARSET_SJIS*/
 extern void initSJIS2UTF16();
+#endif /*CHARSET*/
+
 extern "C" void waveCallback( int channel );
 
 #define DEFAULT_AUDIOBUF  4096
@@ -190,8 +197,12 @@ void ONScripter::initSDL()
     screen_rect.w = screen_width;
     screen_rect.h = screen_height;
 
+#ifdef CHARSET_GBK
+    initGBK2UTF16();
+#else /*CHARSET_SJIS*/
     initSJIS2UTF16();
-    
+#endif /*CHARSET*/
+
     wm_title_string = new char[ strlen(DEFAULT_WM_TITLE) + 1 ];
     memcpy( wm_title_string, DEFAULT_WM_TITLE, strlen(DEFAULT_WM_TITLE) + 1 );
     wm_icon_string = new char[ strlen(DEFAULT_WM_ICON) + 1 ];

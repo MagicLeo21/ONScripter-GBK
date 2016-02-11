@@ -26,3 +26,15 @@
 *.exe
 *.out
 *.app
+
+# Targets
+nsaconv
+nsadec
+onscripter
+sarconv
+sardec
+simple_aviplay
+
+# CTags
+.tags
+.tags_sorted_by_file

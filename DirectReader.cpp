@@ -3,8 +3,10 @@
  *  DirectReader.cpp - Reader from independent files
  *
  *  Copyright (c) 2001-2014 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,10 +29,17 @@
 #include <dirent.h>
 #endif
 
+#ifdef CHARSET_GBK
+#define IS_TWO_BYTE(x) \
+        ( ( (unsigned char)(x) > (unsigned char)0x80 ) && \
+          ( (unsigned char)(x) != (unsigned char)0xff ) )
+extern unsigned short convGBK2UTF16( unsigned short in );
+#else /*CHARSET_SJIS*/
 #define IS_TWO_BYTE(x) \
         ( ((x) & 0xe0) == 0xe0 || ((x) & 0xe0) == 0x80 )
-
 extern unsigned short convSJIS2UTF16( unsigned short in );
+#endif /*CHARSET*/
+
 extern int convUTF16ToUTF8( unsigned char dst[4], unsigned short src );
 
 #ifndef SEEK_END
@@ -303,13 +312,21 @@ FILE *DirectReader::getFileHandle( const char *file_name, int &compression_type,
         if ( (unsigned char)capital_name[i] > 0x80 ) i++;
     }
 
+#ifdef CHARSET_GBK
+#if defined(UTF8_FILESYSTEM) || defined(LINUX)
+    convertFromGBKToUTF8( capital_name_tmp, capital_name );
+    strcpy( capital_name, capital_name_tmp );
+    len = strlen( capital_name );
+#endif /*UTF8_FILESYSTEM||LINUX*/
+#else /*CHARSET_SJIS*/
 #if defined(UTF8_FILESYSTEM)
     convertFromSJISToUTF8(capital_name_tmp, capital_name);
     strcpy(capital_name, capital_name_tmp);
     len = strlen(capital_name);
 #elif defined(LINUX)
     convertFromSJISToEUC(capital_name);
-#endif    
+#endif
+#endif /*CHARSET*/
 
     *length = 0;
     if ( (fp = fopen( capital_name, "rb" )) != NULL && len >= 3 ){
@@ -363,6 +380,33 @@ size_t DirectReader::getFile( const char *file_name, unsigned char *buffer, int 
     return total;
 }
 
+#ifdef CHARSET_GBK
+
+void DirectReader::convertFromGBKToUTF8( char *dst_buf, const char *src_buf )
+{
+    int i, c;
+    unsigned short unicode;
+    unsigned char utf8_buf[4];
+    
+    while( *src_buf ) {
+        if( IS_TWO_BYTE(*src_buf) ) {
+            unsigned short index = *(unsigned char*)src_buf++;
+            index = index << 8 | (*(unsigned char*)src_buf++);
+            unicode = convGBK2UTF16( index );
+            c = convUTF16ToUTF8( utf8_buf, unicode );
+            for( i=0 ; i<c ; i++ ) {
+                *dst_buf++ = utf8_buf[i];
+            }
+        }
+        else {
+            *dst_buf++ = *src_buf++;
+        }
+    }
+    *dst_buf++ = 0;
+}
+
+#else /*CHARSET_SJIS*/
+
 void DirectReader::convertFromSJISToEUC( char *buf )
 {
     int i = 0;
@@ -414,6 +458,8 @@ void DirectReader::convertFromSJISToUTF8( char *dst_buf, const char *src_buf )
     }
     *dst_buf++ = 0;
 }
+
+#endif /*CHARSET*/
 
 size_t DirectReader::decodeNBZ( FILE *fp, size_t offset, unsigned char *buf )
 {

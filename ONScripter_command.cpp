@@ -3,8 +3,10 @@
  *  ONScripter_command.cpp - Command executer of ONScripter
  *
  *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -3157,6 +3159,19 @@ int ONScripter::captionCommand()
     size_t len = strlen(buf);
 
     char *buf2 = new char[len*3+1];
+
+#ifdef CHARSET_GBK
+
+#if defined(MACOSX) && (SDL_COMPILEDVERSION >= 1208)
+    DirectReader::convertFromGBKToUTF8( buf2, buf );
+#elif defined(LINUX) || (defined(WIN32) && defined(UTF8_CAPTION))
+    DirectReader::convertFromGBKToUTF8( buf2, buf );
+#else
+    strcpy( buf2, buf );
+#endif
+
+#else /*CHARSET_SJIS*/
+
 #if defined(MACOSX) && (SDL_COMPILEDVERSION >= 1208) /* convert sjis to utf-8 */
     DirectReader::convertFromSJISToUTF8(buf2, buf);
 #elif defined(LINUX) || (defined(WIN32) && defined(UTF8_CAPTION))
@@ -3169,6 +3184,8 @@ int ONScripter::captionCommand()
 #else
     strcpy(buf2, buf);
 #endif
+
+#endif /*CHARSET*/
     
     setStr( &wm_title_string, buf2 );
     setStr( &wm_icon_string,  buf2 );

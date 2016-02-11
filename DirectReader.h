@@ -3,8 +3,10 @@
  *  DirectReader.h - Reader from independent files
  *
  *  Copyright (c) 2001-2014 Ogapee. All rights reserved.
- *
  *  ogapee@aqua.dti2.ne.jp
+ *
+ *  Copyright (c) 2016 Chen Yan. All rights reserved.
+ *  <leochenlinux@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -46,9 +48,13 @@ public:
     size_t getFileLength( const char *file_name );
     size_t getFile( const char *file_name, unsigned char *buffer, int *location=NULL );
 
+#ifdef CHARSET_GBK
+    static void convertFromGBKToUTF8( char *dst_buf, const char *src_buf );
+#else /*CHARSET_SJIS*/
     static void convertFromSJISToEUC( char *buf );
     static void convertFromSJISToUTF8( char *dst_buf, const char *src_buf );
-    
+#endif /*CHARSET*/
+
 protected:
     char *file_full_path;
     char *file_sub_path;
