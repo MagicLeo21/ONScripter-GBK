@@ -361,8 +361,12 @@ void ONScripter::drawString( const char *str, uchar3 color, FontInfo *info, bool
         }
         else if (*str){
             text[0] = *str++;
+#ifdef CHARSET_GBK
+            text[1] = 0;
+#else /*CHARSET_SJIS*/
             if (*str && *str != 0x0a) text[1] = *str++;
             else                      text[1] = 0;
+#endif /*CHARSET*/
             drawChar( text, info, false, false, surface, cache_info );
         }
     }
@@ -1064,7 +1068,15 @@ bool ONScripter::processText()
             flush_flag = false;
         if ( script_h.getStringBuffer()[ string_buffer_offset + 1 ] &&
              !(script_h.getEndStatus() & ScriptHandler::END_1BYTE_CHAR)){
+#ifdef CHARSET_GBK
+            if( IS_TWO_BYTE(out_text[0]) ) {
+                out_text[1] = script_h.getStringBuffer()[ string_buffer_offset + 1 ];
+            } else {
+                out_text[1] = 0;
+            }
+#else /*CHARSET_SJIS*/
             out_text[1] = script_h.getStringBuffer()[ string_buffer_offset + 1 ];
+#endif /*CHARSET*/
             drawChar( out_text, &sentence_font, flush_flag, true, accumulation_surface, &text_info );
             num_chars_in_sentence++;
         }

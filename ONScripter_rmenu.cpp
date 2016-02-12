@@ -32,6 +32,18 @@
 #define DIALOG_BUTTON_W 96
 #define DIALOG_BUTTON_H 42
 
+#if defined(CHARSET_GBK)
+#define MESSAGE_SAVE_EXIST "%s%s　%s月%s日%s时%s分"
+#define MESSAGE_SAVE_EMPTY "%s%s　－－－－－－－－－－－－"
+#define MESSAGE_SAVE_CONFIRM "%s保存到%s。确认？"
+#define MESSAGE_LOAD_CONFIRM "%s从%s读取。确认？"
+#define MESSAGE_RESET_CONFIRM "重置游戏。确认？"
+#define MESSAGE_END_CONFIRM "结束游戏。确认？"
+#define MESSAGE_YES "是"
+#define MESSAGE_NO "否"
+#define MESSAGE_OK "确定"
+#define MESSAGE_CANCEL "取消"
+#else /*!defined(CHARSET_GBK)*/
 #if defined(ENABLE_1BYTE_CHAR) && defined(FORCE_1BYTE_CHAR)
 #define MESSAGE_SAVE_EXIST "`%s%s    Date %s/%s    Time %s:%s"
 #define MESSAGE_SAVE_EMPTY "`%s%s    ------------------------"
@@ -43,17 +55,6 @@
 #define MESSAGE_NO "No"
 #define MESSAGE_OK "OK"
 #define MESSAGE_CANCEL "Cancel"
-#elif defined(CHARSET_GBK)
-#define MESSAGE_SAVE_EXIST "%s%s　%s月%s日%s时%s分"
-#define MESSAGE_SAVE_EMPTY "%s%s　－－－－－－－－－－－－"
-#define MESSAGE_SAVE_CONFIRM "%s保存到%s。确认？"
-#define MESSAGE_LOAD_CONFIRM "%s从%s读取。确认？"
-#define MESSAGE_RESET_CONFIRM "重置游戏。确认？"
-#define MESSAGE_END_CONFIRM "结束游戏。确认？"
-#define MESSAGE_YES "是"
-#define MESSAGE_NO "否"
-#define MESSAGE_OK "确定"
-#define MESSAGE_CANCEL "取消"
 #else
 #define MESSAGE_SAVE_EXIST "%s%s丂%s寧%s擔%s帪%s暘"
 #define MESSAGE_SAVE_EMPTY "%s%s丂亅亅亅亅亅亅亅亅亅亅亅亅"
@@ -66,6 +67,7 @@
 #define MESSAGE_OK "俷俲"
 #define MESSAGE_CANCEL "僉儍儞僙儖"
 #endif
+#endif /*defined(CHARSET_GBK)*/
 
 #ifdef ANDROID
 #include <stdarg.h>
