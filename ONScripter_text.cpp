@@ -1080,10 +1080,17 @@ bool ONScripter::processText()
             else
                 waitEvent( sentence_font.wait_time );
         }
-
+#ifdef CHARSET_GBK
+        if ( IS_TWO_BYTE( ch ) &&
+             script_h.getStringBuffer()[ string_buffer_offset + 1 ] &&
+             !(script_h.getEndStatus() & ScriptHandler::END_1BYTE_CHAR) ) {
+            string_buffer_offset++;
+        }
+#else /*CHARSET_SJIS*/
         if ( script_h.getStringBuffer()[ string_buffer_offset + 1 ] &&
              !(script_h.getEndStatus() & ScriptHandler::END_1BYTE_CHAR))
             string_buffer_offset++;
+#endif /*CHARSET*/
         string_buffer_offset++;
 
         return true;
