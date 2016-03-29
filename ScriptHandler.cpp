@@ -227,7 +227,7 @@ const char *ScriptHandler::readToken()
                     addStringBuffer( ch );
                     buf++;
                     if (ch == '_') ignore_clickstr_flag = true;
-                    if (!wait_script && ch == '@') wait_script = buf;
+                    if (!wait_script && (ch == '@' || ch == '\\')) wait_script = buf;
                 }
             }
             ch = *buf;

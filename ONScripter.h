@@ -2,7 +2,7 @@
  * 
  *  ONScripter.h - Execution block parser of ONScripter
  *
- *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
+ *  Copyright (c) 2001-2016 Ogapee. All rights reserved.
  *
  *  ogapee@aqua.dti2.ne.jp
  *
@@ -505,7 +505,8 @@ private:
     char *readSaveStrFromFile( int no );
     int  loadSaveFile( int no );
     void saveMagicNumber( bool output_flag );
-    int  saveSaveFile( bool write_to_disk, int no=0, const char *savestr=NULL );
+    void storeSaveFile();
+    int  writeSaveFile( int no=0, const char *savestr=NULL );
 
     int  loadSaveFile2( int file_version );
     void saveSaveFile2( bool output_flag );

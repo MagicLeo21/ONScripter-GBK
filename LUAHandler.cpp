@@ -2,7 +2,7 @@
  *
  *  LUAHandler.cpp - LUA handler for ONScripter
  *
- *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
+ *  Copyright (c) 2001-2016 Ogapee. All rights reserved.
  *
  *  ogapee@aqua.dti2.ne.jp
  *
@@ -219,8 +219,8 @@ int NSSetIntValue(lua_State *state)
     lua_getglobal( state, ONS_LUA_HANDLER_PTR );
     LUAHandler *lh = (LUAHandler*)lua_topointer( state, -1 );
 
-    int no  = luaL_checkint( state, 1 );
-    int val = luaL_checkint( state, 2 );
+    int no  = luaL_checkinteger( state, 1 );
+    int val = luaL_checkinteger( state, 2 );
     
     lh->sh->setNumVariable( no, val );
     
@@ -232,7 +232,7 @@ int NSSetStrValue(lua_State *state)
     lua_getglobal( state, ONS_LUA_HANDLER_PTR );
     LUAHandler *lh = (LUAHandler*)lua_topointer( state, -1 );
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
     const char *str = luaL_checkstring( state, 2 );
     
     if (lh->sh->getVariableData(no).str)
@@ -252,7 +252,7 @@ int NSGetIntValue(lua_State *state)
     lua_getglobal( state, ONS_LUA_HANDLER_PTR );
     LUAHandler *lh = (LUAHandler*)lua_topointer( state, -1 );
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
     
     lua_pushnumber( state, lh->sh->getVariableData(no).num );
     
@@ -264,7 +264,7 @@ int NSGetStrValue(lua_State *state)
     lua_getglobal( state, ONS_LUA_HANDLER_PTR );
     LUAHandler *lh = (LUAHandler*)lua_topointer( state, -1 );
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
     
     lua_pushstring( state, lh->sh->getVariableData(no).str );
     
@@ -469,7 +469,7 @@ int NSSleep(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int val = luaL_checkint( state, 1 );
+    int val = luaL_checkinteger( state, 1 );
 
     sprintf(cmd_buf, "wait %d", val);
     lh->sh->enterExternalScript(cmd_buf);
@@ -497,8 +497,8 @@ int NSSpCell(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
-    int cell = luaL_checkint( state, 2 );
+    int no = luaL_checkinteger( state, 1 );
+    int cell = luaL_checkinteger( state, 2 );
 
     sprintf(cmd_buf, "cell %d, %d", no, cell);
     lh->sh->enterExternalScript(cmd_buf);
@@ -513,7 +513,7 @@ int NSSpClear(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
 
     sprintf(cmd_buf, "csp %d", no);
     lh->sh->enterExternalScript(cmd_buf);
@@ -528,7 +528,7 @@ int NSSpGetInfo(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
 
     AnimationInfo *ai = lh->ons->getSpriteInfo(no);
 
@@ -544,7 +544,7 @@ int NSSpGetPos(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
 
     AnimationInfo *ai = lh->ons->getSpriteInfo(no);
 
@@ -560,7 +560,7 @@ int NSSpLoad(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
     const char *str = luaL_checkstring( state, 2 );
 
     sprintf(cmd_buf, "lsp %d, \"%s\", %d, 0", no, str, lh->ons->getWidth()+1);
@@ -576,10 +576,10 @@ int NSSpMove(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
-    int x  = luaL_checkint( state, 2 );
-    int y  = luaL_checkint( state, 3 );
-    int alpha = luaL_checkint( state, 4 );
+    int no = luaL_checkinteger( state, 1 );
+    int x  = luaL_checkinteger( state, 2 );
+    int y  = luaL_checkinteger( state, 3 );
+    int alpha = luaL_checkinteger( state, 4 );
 
     sprintf(cmd_buf, "amsp %d, %d, %d, %d", no, x, y, alpha);
     lh->sh->enterExternalScript(cmd_buf);
@@ -594,7 +594,7 @@ int NSSpVisible(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
     int v  = lua_toboolean( state, 2 );
 
     sprintf(cmd_buf, "vsp %d, %d", no, v);
@@ -610,7 +610,7 @@ int NSSp2GetInfo(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
 
     AnimationInfo *ai = lh->ons->getSprite2Info(no);
 
@@ -626,7 +626,7 @@ int NSSp2GetPos(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
 
     AnimationInfo *ai = lh->ons->getSprite2Info(no);
 
@@ -646,7 +646,7 @@ int NSSp2Load(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
+    int no = luaL_checkinteger( state, 1 );
     const char *str = luaL_checkstring( state, 2 );
 
     sprintf(cmd_buf, "lsp2 %d, \"%s\", %d, 0, 100, 100, 0", no, str, lh->ons->getWidth()*2);
@@ -662,14 +662,14 @@ int NSSp2Move(lua_State *state)
     lua_getglobal(state, ONS_LUA_HANDLER_PTR);
     LUAHandler *lh = (LUAHandler*)lua_topointer(state, -1);
 
-    int no = luaL_checkint( state, 1 );
-    int x  = luaL_checkint( state, 2 );
-    int y  = luaL_checkint( state, 3 );
-    int sx = luaL_checkint( state, 4 );
-    int sy = luaL_checkint( state, 5 );
-    int r  = luaL_checkint( state, 6 );
-    int alpha = luaL_checkint( state, 7 );
-    int opt = luaL_checkint( state, 8 ); // opt is not handled properly yet
+    int no = luaL_checkinteger( state, 1 );
+    int x  = luaL_checkinteger( state, 2 );
+    int y  = luaL_checkinteger( state, 3 );
+    int sx = luaL_checkinteger( state, 4 );
+    int sy = luaL_checkinteger( state, 5 );
+    int r  = luaL_checkinteger( state, 6 );
+    int alpha = luaL_checkinteger( state, 7 );
+    int opt = luaL_checkinteger( state, 8 ); // opt is not handled properly yet
 
     sprintf(cmd_buf, "amsp2 %d, %d, %d, %d, %d, %d, %d", no, x, y, sx, sy, r, alpha);
     lh->sh->enterExternalScript(cmd_buf);

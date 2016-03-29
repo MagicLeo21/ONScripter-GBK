@@ -2,7 +2,7 @@
  *
  *  ONScripter_rmenu.cpp - Right click menu handler of ONScripter
  *
- *  Copyright (c) 2001-2015 Ogapee. All rights reserved.
+ *  Copyright (c) 2001-2016 Ogapee. All rights reserved.
  *  ogapee@aqua.dti2.ne.jp
  *
  *  Copyright (c) 2016 Chen Yan. All rights reserved.
@@ -462,8 +462,8 @@ void ONScripter::executeSystemSave()
     if ( current_button_state.button > 0 ){
         int file_no = current_button_state.button;
         if (executeSystemYesNo( SYSTEM_SAVE, file_no )){
-            if (saveon_flag && internal_saveon_flag) saveSaveFile(false);
-            saveSaveFile( true, file_no );
+            if (saveon_flag && internal_saveon_flag) storeSaveFile();
+            writeSaveFile( file_no );
             leaveSystemCall();
         }
         return;
